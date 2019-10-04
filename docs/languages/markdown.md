@@ -267,25 +267,25 @@ Place the following source code in that file:
 ```javascript
 var gulp = require('gulp');
 var markdown = require('gulp-markdown-it');
+var htmlfolder = 'build';
 
 gulp.task('markdown', function() {
-    return gulp.src('**/*.md')
-        .pipe(markdown())
-        .pipe(gulp.dest(function(f) {
-            return f.base;
-        }));
+  return gulp
+    .src(['**/*.md', '!node_modules/**'])
+    .pipe(markdown())
+    .pipe(gulp.dest(htmlfolder));
 });
 
-gulp.task('default', ['markdown'], function() {
-    gulp.watch('**/*.md', ['markdown']);
-});
+gulp.task('default', gulp.series('markdown', function() {
+  gulp.watch('**/*.md', gulp.series('markdown'));
+}));
 ```
 
 What is happening here?
 
 1. We are watching for changes to any Markdown file in our workspace, i.e. the current folder open in VS Code.
 2. We take the set of Markdown files that have changed, and run them through our Markdown compiler, i.e. `gulp-markdown-it`.
-3. We now have a set of HTML files, each named respectively after their original Markdown file. We then put these files in the same directory.
+3. We now have a set of HTML files, each named respectively after their original Markdown file. We then put these files in the same directory("build") according the original folder struture.
 
 ### Step 3: Run the gulp default Task
 
